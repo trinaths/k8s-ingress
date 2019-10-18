@@ -1,0 +1,50 @@
+ apiVersion: extensions/v1beta1
+ kind: Deployment
+ metadata:
+   name: f5-bigip-ctlr
+   namespace: kube-system
+ spec:
+   replicas: 1
+   template:
+     metadata:
+       name: k8s-bigip-ctlr
+       labels:
+         app: k8s-bigip-ctlr
+     spec:
+       # Name of the Service Account bound to a Cluster Role with the required
+       # permissions
+       serviceAccountName: bigip-ctlr
+       containers:
+         - name: k8s-bigip-ctlr
+           image: "somanchit/k8s-bigip-ctlr:ingress"
+           env:
+             - name: BIGIP_USERNAME
+               valueFrom:
+                 secretKeyRef:
+                   # Replace with the name of the Secret containing your login
+                   # credentials
+                   name: bigip-login
+                   key: username
+             - name: BIGIP_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                   # Replace with the name of the Secret containing your login
+                   # credentials
+                   name: bigip-login
+                   key: password
+           command: ["/app/bin/k8s-bigip-ctlr"]
+           args: [
+             "--bigip-username=$(BIGIP_USERNAME)",
+             "--bigip-password=$(BIGIP_PASSWORD)",
+             "--bigip-url=10.145.71.250",
+             "--bigip-partition=ingress",
+             "--pool-member-type=cluster",
+             "--namespace=f5demo",
+             "--log-level=DEBUG",
+             "--insecure=true",
+             "--agent=as3",
+             "--default-ingress-ip=10.10.10.20"
+             ]
+       imagePullSecrets:
+         - name: f5-docker-images
+         - name: bigip-login

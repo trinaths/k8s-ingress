@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: ingress-service-bar
+    labels:
+        name: ingress-basic
+    namespace: f5demo
+spec:
+    type: ClusterIP
+    ports:
+        -
+            port: 8082
+            targetPort: 8082
+    selector:
+        app: ingress-basic
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: ingress-service-foo
+    labels:
+        name: ingress-basic
+    namespace: f5demo
+spec:
+    type: ClusterIP
+    ports:
+        -
+            port: 8081
+            targetPort: 8081
+    selector:
+        app: ingress-basic
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: ingress-basic
+    labels:
+        name: ingress-basic
+    namespace: f5demo
+spec:
+    type: ClusterIP
+    ports:
+        -
+            port: 8080
+            targetPort: 8080
+    selector:
+        app: ingress-basic

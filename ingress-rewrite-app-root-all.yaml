@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    virtual-server.f5.com/rewrite-app-root: "/home"
+    virtual-server.f5.com/ip: "20.20.20.24"
+    virtual-server.f5.com/partition: "cis"
+    virtual-server.f5.com/balance: "least-connections-node"
+  name: rewrite-root-all
+  namespace: f5demo
+spec:
+  backend:
+    serviceName: ingress-basic
+    servicePort: 8080

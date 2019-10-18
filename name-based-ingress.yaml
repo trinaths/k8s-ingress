@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: name-based-ingress
+  namespace: f5demo
+  annotations:
+    virtual-server.f5.com/ip: "controller-default"
+    virtual-server.f5.com/partition: "cis"
+    virtual-server.f5.com/balance: "least-connections-node"
+spec:
+  rules:
+  - host: foo.foo.com
+    http:
+      paths:
+      - path: /foo
+        backend:
+          serviceName: ingress-service-foo
+          servicePort: 8081
+  - host: bar.foo.com
+    http:
+      paths:
+      - path: /bar
+        backend:
+          serviceName: ingress-service-bar
+          servicePort: 8082
