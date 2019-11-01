@@ -1,0 +1,99 @@
+{
+  "class": "ADC",
+  "schemaVersion": "3.11.0",
+  "id": "urn:uuid:ad4cac1a-6627-4a7e-b923-4beff58bea2e",
+  "label": "Converted Declaration",
+  "remark": "Manually updated",
+  "f5demo": {
+    "class": "Tenant",
+    "Shared": {
+      "class": "Application",
+      "template": "shared",
+      "Ingress_172_16_3_3_80": {
+        "rules": [
+          {
+            "name": "app_root_forward_rule_single_service",
+            "conditions": [
+              {
+                "event": "request",
+                "type": "httpUri",
+                "path": {
+                  "values": [
+                    "/bar"
+                  ],
+                  "operand": "equals"
+                }
+              }
+            ],
+            "actions": [
+              {
+                "event": "request",
+                "type": "forward",
+                "select": {
+                  "pool": {
+                    "use": "ingress_default_svc"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "app_root_redirect_rule_single_service",
+            "conditions": [
+              {
+                "event": "request",
+                "type": "httpUri",
+                "path": {
+                  "values": [
+                    "/"
+                  ],
+                  "operand": "equals"
+                }
+              }
+            ],
+            "actions": [
+              {
+                "type": "httpRedirect",
+                "event": "request",
+                "location": "/bar"
+              }
+            ]
+          }
+        ],
+        "strategy": "first-match",
+        "class": "Endpoint_Policy"
+      },
+      "ingress_default_svc": {
+        "members": [
+          {
+            "addressDiscovery": "static",
+            "servicePort": 80,
+            "serverAddresses": [
+              "10.129.0.169"
+            ]
+          }
+        ],
+        "class": "Pool"
+      },
+      "ingress_172_16_3_3_80": {
+        "layer4": "tcp",
+        "pool": "ingress_default_svc",
+        "translateServerAddress": true,
+        "translateServerPort": true,
+        "class": "Service_HTTP",
+        "profileHTTP": {
+          "bigip": "/Common/http"
+        },
+        "profileTCP": {
+          "bigip": "/Common/tcp"
+        },
+        "virtualAddresses": [
+          "172.16.3.3%0"
+        ],
+        "virtualPort": 80,
+        "snat": "auto",
+        "policyEndpoint": "/f5demo/Shared/Ingress_172_16_3_3_80"
+      }
+    }
+  }
+}
